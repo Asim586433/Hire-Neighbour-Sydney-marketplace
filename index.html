@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Hire Neighbour · Sydney marketplace</title>
+    <style>
+        /* --------------------------------------------- */
+        /* modern, mobile-first, startup style           */
+        /* --------------------------------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #app {
+            width: 100%;
+            max-width: 480px;  /* mobile first */
+            background: white;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            border-radius: 32px 32px 0 0;
+            overflow: hidden;
+            position: relative;
+            margin: 1rem auto;
+        }
+
+        /* desktop sidebar simulation (hidden on mobile, visible on wider screens) */
+        @media (min-width: 900px) {
+            #app {
+                max-width: 1200px;
+                border-radius: 24px;
+                display: grid;
+                grid-template-columns: 260px 1fr;
+                box-shadow: 0 20px 40px -10px rgba(0,20,30,0.2);
+            }
+            .mobile-nav { display: none; }
+            .desktop-sidebar { display: block; background: #f9fafc; border-right: 1px solid #eef2f6; }
+        }
+
+        .desktop-sidebar { display: none; padding: 1.8rem 1rem; }
+        .desktop-sidebar .logo { font-weight: 700; font-size: 1.5rem; letter-spacing: -0.5px; margin-bottom: 2.5rem; color: #0a2540; }
+        .desktop-sidebar .logo span { background: #635bff; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.9rem; margin-left: 4px; }
+        .desktop-sidebar nav a { display: flex; padding: 0.8rem 1rem; margin: 4px 0; border-radius: 14px; color: #3c4a5c; font-weight: 500; text-decoration: none; }
+        .desktop-sidebar nav a.active { background: #e9ecf3; color: #0a2540; }
+
+        /* header & bottom nav */
+        .header {
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #eef2f6;
+            background: white;
+        }
+        .logo-mobile { font-weight: 700; font-size: 1.4rem; color: #0a2540; }
+        .header-icons { display: flex; gap: 1.2rem; color: #5f6c80; }
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 0.8rem 1rem;
+            background: white;
+            border-top: 1px solid #edf2f7;
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+        }
+        .bottom-nav span { font-size: 0.7rem; display: block; color: #5f6b7a; }
+        .nav-icon { text-align: center; }
+
+        /* main content */
+        .main-content {
+            padding: 1.2rem 1rem 2rem;
+            background: white;
+            min-height: 70vh;
+        }
+
+        /* cards & elements */
+        .section-title { font-weight: 600; font-size: 1.1rem; margin: 1.2rem 0 0.6rem; color: #1e293b; }
+        .card {
+            background: white;
+            border-radius: 22px;
+            padding: 1rem;
+            box-shadow: 0 8px 20px -6px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.02);
+            border: 1px solid #f0f4f9;
+            margin-bottom: 1rem;
+        }
+        .flex-row { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+        .badge {
+            background: #e8edf5; padding: 4px 12px; border-radius: 40px; font-size: 0.75rem; font-weight: 500;
+        }
+        .badge.success { background: #e3f2ef; color: #0b6b5a; }
+        .badge.warning { background: #fff1db; color: #a85d00; }
+        .badge.primary { background: #e1e3ff; color: #2a2f8b; }
+
+        .btn {
+            background: #f1f4f9; border: none; border-radius: 40px; padding: 0.7rem 1.2rem;
+            font-weight: 500; color: #1e293b; cursor: pointer; transition: all 0.1s;
+        }
+        .btn-primary { background: #0a2540; color: white; box-shadow: 0 8px 14px -8px #0a254050; }
+        .btn-primary:hover { background: #1b3b5c; }
+
+        /* role switcher */
+        .role-switch {
+            background: #f4f7fd; border-radius: 40px; padding: 4px; display: inline-flex;
+            flex-wrap: wrap; margin: 1rem 0;
+        }
+        .role-switch button {
+            background: transparent; border: none; border-radius: 40px; padding: 0.5rem 1rem;
+            font-size: 0.8rem; font-weight: 500; color: #4a5a72; cursor: pointer;
+        }
+        .role-switch button.active { background: white; box-shadow: 0 2px 6px #d0d9e8; color: #0a2540; }
+
+        /* tables for admin */
+        .table-mini { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .table-mini td { padding: 0.5rem 0; border-bottom: 1px solid #edf2f9; }
+
+        /* modal simulation */
+        .modal-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(2px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+        }
+        .modal-card { background: white; width: 90%; max-width: 360px; border-radius: 32px; padding: 1.8rem; }
+
+        /* map dummy */
+        .map-placeholder { background: #cbd5e1; height: 160px; border-radius: 28px; display: flex; align-items: center; justify-content: center; color: #334155; font-size: 0.9rem; background-image: radial-gradient(circle at 20px 30px, #a0afc0 2px, transparent 2px), linear-gradient(#b3c2d1, #9aafc4); background-size: 40px 40px, 100%; }
+
+        /* charts dummy (pure css) */
+        .chart-row { display: flex; align-items: center; gap:6px; margin: 8px 0; }
+        .chart-bar { height: 8px; background: #635bff; border-radius: 20px; }
+
+        /* empty states & toasts */
+        .toast-message { background: #1e293b; color: white; padding: 0.8rem 1.5rem; border-radius: 60px; font-size: 0.9rem; box-shadow: 0 10px 25px -8px black; position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 1200; animation: fade 2s forwards; pointer-events: none; }
+        @keyframes fade { 0%{ opacity:0; bottom:80px } 15%{ opacity:1; bottom:100px } 85%{ opacity:1 } 100%{ opacity:0; bottom:80px } }
+
+        /* micro interactions */
+        button { cursor: pointer; }
+        .btn:active { transform: scale(0.97); }
+        .card { transition: all 0.1s; }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!-- desktop sidebar (static) -->
+    <div class="desktop-sidebar">
+        <div class="logo">HIRE<span>neighbour</span></div>
+        <nav>
+            <a href="#" class="active">🏠 Home</a>
+            <a href="#">🔍 Search</a>
+            <a href="#">📦 Bookings</a>
+            <a href="#">🚗 Driver jobs</a>
+            <a href="#">💬 Messages</a>
+            <a href="#">📊 Dashboard</a>
+        </nav>
+    </div>
+
+    <!-- main mobile area -->
+    <div style="display: flex; flex-direction: column; height: 100%;">
+        <!-- header -->
+        <div class="header">
+            <div class="logo-mobile">Hire<span style="color:#635bff;">.</span></div>
+            <div class="header-icons">
+                <span>🔍</span> <span>🔔</span> <span>👤</span>
+            </div>
+        </div>
+
+        <!-- role switcher (interactive) -->
+        <div style="padding: 0 1rem;">
+            <div class="role-switch" id="roleSwitcher">
+                <button class="active" data-role="renter">Renter</button>
+                <button data-role="host">Host</button>
+                <button data-role="driver">Driver</button>
+                <button data-role="support">Support</button>
+                <button data-role="admin">Admin</button>
+            </div>
+        </div>
+
+        <!-- main content area (views injected via js) -->
+        <div class="main-content" id="mainContent">
+            <!-- dynamic content from javascript -->
+        </div>
+
+        <!-- bottom mobile nav -->
+        <div class="bottom-nav">
+            <div class="nav-icon">🏠<span>Home</span></div>
+            <div class="nav-icon">🔎<span>Search</span></div>
+            <div class="nav-icon">📦<span>Book</span></div>
+            <div class="nav-icon">💬<span>Chat</span></div>
+            <div class="nav-icon">👤<span>Profile</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- dummy toast container -->
+<div id="toastContainer" style="position:fixed; top:0; left:0; width:100%; pointer-events:none; z-index:9999;"></div>
+
+<script>
+    (function() {
+        // ---------------------------------------- //
+        //  DUMMY DATA (Sydney marketplace)         //
+        // ---------------------------------------- //
+        const users = [
+            { id:1, name:'Alice', role:'renter', suburb:'Bondi', rating:4.9 },
+            { id:2, name:'Bob', role:'host', suburb:'Surry Hills', rating:4.8 },
+            { id:3, name:'Charlie', role:'driver', vehicle:'ute', suburb:'Parramatta' },
+            { id:4, name:'Dana', role:'support' },
+            { id:5, name:'Elena', role:'admin' }
+        ];
+        const listings = [
+            { id:101, title:'Secure garage in Bondi', host:'Bob', size:'25 m²', price:120, weekly:120, rating:4.9, suburb:'Bondi', type:'Garage', image:'🖼️', status:'active' },
+            { id:102, title:'Spare room – dry storage', host:'Carol', size:'18 m²', price:85, weekly:85, rating:4.7, suburb:'Randwick', type:'Room', image:'🖼️', status:'active' },
+            { id:103, title:'Storage cage North Sydney', host:'Mike', size:'12 m²', price:60, weekly:60, rating:4.5, suburb:'North Sydney', type:'Cage', image:'🖼️', status:'pending' },
+        ];
+        const bookings = [
+            { id:501, renter:'Alice', listing:'Garage Bondi', dates:'10-17 May', total:120, status:'confirmed', payment:'paid' },
+            { id:502, renter:'Tom', listing:'Spare room', dates:'22-30 May', total:680, status:'requested', payment:'pending' }
+        ];
+        const transportJobs = [
+            { id:301, renter:'Alice', from:'Bondi', to:'Randwick', item:'boxes', vehicle:'ute', status:'requested', quoted:65 },
+            { id:302, renter:'John', from:'CBD', to:'Manly', item:'furniture', status:'in_transit', driver:'Charlie' }
+        ];
+        const messages = {
+            501: [{ from:'Alice', msg:'Hi, is the garage available?', time:'10:20' }, { from:'Bob', msg:'Yes, feel free to book', time:'10:22' }],
+            301: [{ from:'Alice', msg:'Can you bring a hand truck?', time:'09:10' }, { from:'Charlie', msg:'Sure!', time:'09:15' }]
+        };
+        let currentRole = 'renter'; // default
+
+        // Helper: show toast
+        function showToast(text) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-message';
+            toast.innerText = text;
+            document.getElementById('toastContainer').appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        // Render view based on role
+        function renderRoleView(role) {
+            const container = document.getElementById('mainContent');
+            if (!container) return;
+            let html = '';
+
+            if (role === 'renter') {
+                html = `
+                    <div class="card" style="padding:0.5rem 1rem;"><span>🔍</span> <input type="text" placeholder="Search suburb or postcode..." style="border:0;background:#f0f4fc;padding:0.8rem;border-radius:60px;width:100%;"></div>
+                    <div class="flex-row"><span class="badge">📍 Bondi</span><span class="badge">💰 $0-200</span><span class="badge">📦 Garage</span><span class="btn" style="padding:0.3rem 1rem;">Filter</span></div>
+                    <div class="map-placeholder" style="margin:1rem 0;">🗺️ map view · 12 storage spots near you</div>
+                    <div class="section-title">✨ Featured storage</div>
+                    ${listings.map(l => `
+                        <div class="card flex-row" style="justify-content:space-between;">
+                            <div><span style="font-size:2rem;">${l.image}</span></div>
+                            <div style="flex:2"><b>${l.title}</b><br>${l.suburb} · ★ ${l.rating} · $${l.weekly}/wk</div>
+                            <div><button class="btn btn-primary book-now" data-id="${l.id}">Book</button></div>
+                        </div>`).join('')}
+                    <div class="section-title">🚗 need a driver?</div>
+                    <div class="card flex-row"><span>🚚 from Bondi to Randwick</span><button class="btn btn-primary transport-quote">Get quote</button></div>
+                    <div class="section-title">📋 booking history</div>
+                    <div class="card">📦 Garage Bondi · confirmed  ✅<br>⭐ rate host · <button class="btn">review</button></div>
+                    <div class="card">💬 messages with host <button class="btn">Chat</button></div>
+                `;
+                // attach event after injection (simple)
+                setTimeout(() => {
+                    document.querySelectorAll('.book-now').forEach(b => b.addEventListener('click', () => showToast('Booking requested (dummy)')));
+                }, 50);
+            }
+            else if (role === 'host') {
+                html = `
+                    <div class="card"><b>💰 earnings this month</b> $1,240 · <span class="badge success">+18%</span></div>
+                    <div class="card"><button class="btn btn-primary" id="createListingBtn">+ create new listing</button></div>
+                    <div class="section-title">📌 your listings</div>
+                    ${listings.map(l => `
+                        <div class="card flex-row">
+                            <span>${l.title} · $${l.weekly}/wk</span>
+                            <span class="badge ${l.status === 'active'?'success':'warning'}">${l.status}</span>
+                            <button class="btn" data-pause>⏸️</button>
+                        </div>`).join('')}
+                    <div class="section-title">📬 booking requests</div>
+                    <div class="card">from Alice: Garage Bondi · <button class="btn btn-primary acceptBooking">accept</button> <button class="btn">decline</button></div>
+                    <div class="section-title">💬 renter messages</div>
+                    <div class="card">Alice: "hi, is it secure?" · <button class="btn">reply</button></div>
+                `;
+                setTimeout(() => {
+                    document.getElementById('createListingBtn')?.addEventListener('click', () => showToast('Listing form (photo upload preview)'));
+                    document.querySelectorAll('.acceptBooking').forEach(b => b.addEventListener('click', () => showToast('Booking accepted, payment pending')));
+                }, 50);
+            }
+            else if (role === 'driver') {
+                html = `
+                    <div class="card"><b>🚐 your vehicle:</b> Toyota HiAce · verified</div>
+                    <div class="card"><span class="badge success">online</span> available for jobs</div>
+                    <div class="section-title">📦 available transport jobs</div>
+                    <div class="card">Bondi → Randwick · boxes · $65 quote <button class="btn btn-primary acceptJob">accept</button></div>
+                    <div class="card">CBD → Manly · furniture · in_transit <button class="btn">mark complete</button></div>
+                    <div class="section-title">💰 earnings summary</div>
+                    <div class="card">this week: $340 · 4 jobs</div>
+                    <div class="section-title">⭐ my ratings</div>
+                    <div class="card">★★★★☆ (4.7) · 23 trips</div>
+                `;
+                setTimeout(() => {
+                    document.querySelectorAll('.acceptJob').forEach(b => b.addEventListener('click', () => showToast('Job accepted (status: in_transit)')));
+                }, 50);
+            }
+            else if (role === 'support') {
+                html = `
+                    <div class="card"><input placeholder="search users, listings..."></div>
+                    <div class="section-title">👥 users (dispute cases)</div>
+                    <div class="card flex-row">Alice vs Bob · storage dispute <button class="badge warning">escalate</button></div>
+                    <div class="card flex-row">Charlie (driver) · late delivery <button class="badge warning">escalate</button></div>
+                    <div class="section-title">📋 listings pending review</div>
+                    <div class="card">Storage cage North Sydney · <button>view</button> <button>flag</button></div>
+                    <div class="section-title">📦 active bookings</div>
+                    <div class="card">#502 requested · <span class="badge">waiting</span></div>
+                    <div class="section-title">🚚 driver jobs</div>
+                    <div class="card">job #301 requested · dispute? <button class="badge warning">escalate</button></div>
+                `;
+            }
+            else if (role === 'admin') {
+                html = `
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;"><span class="badge primary">💰 total payouts $8,240</span><span class="badge primary">📦 listings 18</span><span class="badge primary">disputes 2</span></div>
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between;"><span>📊 user mgmt</span><button>export CSV</button></div>
+                        <table class="table-mini"><tr><td>Alice (renter)</td><td>active</td><td><button>suspend</button></td></tr><tr><td>Bob (host)</td><td>active</td><td><button>suspend</button></td></tr><tr><td>Charlie (driver)</td><td>flagged</td><td><button>reactivate</button></td></tr></table>
+                    </div>
+                    <div class="card">
+                        <div>📋 listing moderation</div>
+                        <table class="table-mini"><tr><td>Garage Bondi</td><td class="badge success">active</td><td><button>disable</button></td></tr><tr><td>Cage North Sydney</td><td class="badge warning">pending</td><td><button>approve</button> <button>reject</button></td></tr></table>
+                    </div>
+                    <div class="card">
+                        <div>💰 payment monitor</div>
+                        <div>Stripe Connect: $3,200 held · <button>view tx</button></div>
+                        <div>driver payout due: $580</div>
+                    </div>
+                    <div class="card">📅 booking states: requested, confirmed, active, completed, disputed (badges ok)</div>
+                    <div class="card">🚚 job states: requested, quoted, accepted, in_transit, completed, cancelled, disputed</div>
+                `;
+            }
+
+            // always append architecture & timeline (Sections 16+17) inside mainContent as polished proposal
+            html += `
+                <div style="margin-top: 2rem; border-top: 2px solid #edf2f9; padding: 1.2rem 0;">
+                    <h3 style="color:#0a2540;">🏛️ Recommended Architecture</h3>
+                    <div class="card" style="background:#f9fcff;">
+                        <p>⚛️ React Native (mobile app) · Node.js API · PostgreSQL (Supabase) · Stripe Connect · Google Maps · AWS/GCP hosting. <br>Scalable, secure, neighbourhood‑ready.</p>
+                    </div>
+                    <h3 style="color:#0a2540;">📅 Timeline & Estimates</h3>
+                    <div class="flex-row">
+                        <div class="card" style="flex:1;"><b>Estimate A</b><br>Storage MVP<br>8 weeks · $48k</div>
+                        <div class="card" style="flex:1;"><b>Estimate B</b><br>+Driver transport<br>12 weeks · $72k</div>
+                    </div>
+                    <p style="font-size:0.8rem; opacity:0.6;">* dummy milestones: design, backend, frontend, launch</p>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        // role switcher logic
+        const roleButtons = document.querySelectorAll('#roleSwitcher button');
+        roleButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                roleButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentRole = btn.dataset.role;
+                renderRoleView(currentRole);
+                showToast(`Switched to ${currentRole} view`);
+            });
+        });
+
+        // authentication simulation (login/otp)
+        function showAuthModal() {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'authModal';
+            overlay.innerHTML = `
+                <div class="modal-card">
+                    <h3>🔐 Sign in / Sign up</h3>
+                    <input placeholder="+61 4.." style="width:100%; margin:10px 0; padding:12px; border-radius:30px; border:1px solid #ccc;">
+                    <button class="btn btn-primary" id="sendOtpBtn">Send OTP</button>
+                    <p style="margin-top:10px;">⬆️ OTP verification dummy</p>
+                    <button id="closeModal" style="background:none; border:none; margin-top:8px;">close</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            document.getElementById('sendOtpBtn')?.addEventListener('click', () => {
+                showToast('✅ Verified (dummy)'); 
+                document.getElementById('authModal')?.remove();
+            });
+            document.getElementById('closeModal')?.addEventListener('click', () => overlay.remove());
+        }
+
+        // Initial render (renter)
+        renderRoleView('renter');
+
+        // optional: add click on profile to show auth (simulate signup)
+        document.querySelector('.header-icons span:last-child')?.addEventListener('click', showAuthModal);
+
+        // Extra payment summary, message simulation
+        setTimeout(() => {
+            // add example payment summary screen (via booking details)
+            const msgBtn = document.querySelector('.card .btn'); 
+            // Also attach messaging demo
+            document.body.addEventListener('click', (e) => {
+                if (e.target.innerText.includes('Chat')) {
+                    showToast('💬 message thread: "Is it available?" — type dummy');
+                }
+                if (e.target.innerText.includes('review')) {
+                    showToast('⭐ thank you! rating submitted (5 star)');
+                }
+                if (e.target.innerText.includes('export CSV')) {
+                    showToast('📁 CSV export simulation');
+                }
+                if (e.target.innerText.includes('escalate')) {
+                    showToast('⏫ issue escalated to admin');
+                }
+                if (e.target.innerText.includes('suspend')) {
+                    showToast('⚠️ account suspended (demo)');
+                }
+                if (e.target.innerText.includes('disable')) {
+                    showToast('🚫 listing disabled');
+                }
+                if (e.target.innerText.includes('approve')) {
+                    showToast('✅ listing approved');
+                }
+            });
+        }, 200);
+
+        // add dummy activity feed on load
+        console.log('Hire Neighbour MVP ready');
+    })();
+</script>
+
+<!-- Additional dummy data for payment & reviews section, already partially used -->
+</body>
+</html>
